@@ -1,4 +1,4 @@
-# Diplomatura-BIGDATA-ITBA
+# Diplomatura en BIG DATA
 Repositorio de TPs y Proyectos Finales de la Diplomatura
 
 ## Módulos:
