@@ -1,0 +1,371 @@
+---
+title: "Diplomatura en BIG DATA"
+subtitle:  "Data Mining & Machine Learning"
+author: "Escalada Christian"
+date: "17 de Mayo de 2022"
+
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Trabajo Práctico N°1
+
+## Análisis Exploratorio de Datos – Iris Dataset
+
+## Enunciados:
+
+### **Ejercicio 1 – Parte teórica**
+1. ¿Por qué es importante testear un modelo de Machine Learning?
+
+### **Ejercicio 2 – Clasificación** 
+**Parte A:** _Análisis Exploratorio de Datos_
+````
+  1.	Abra el dataset iris: 
+    a.	data(iris) .
+    b.	Escriba en R ?iris y copie el párrafo de Description. 
+    c.	Optativo: busque en Internet alguna imagen de flores iris: setosa, versicolor y/o virginica. Indique la página web origen de la imagen.
+  2.	Muestre dim(iris) y str(iris): 
+    a.	¿Cuántas variables tiene el dataset?
+    b.	¿Qué significa cada variable?
+  3.	Muestre summary(iris$Species) 
+    a.	¿Cuántas flores por cada especie hay en el dataset?
+  4.	Realice un gráfico de barras de la variable a predecir:
+    a.	Elija un título y color. 
+    b.	Indique cómo quedó el código R. 
+  5.	Muestre un summary(iris):
+    a.	¿En qué rango se encuentran los largos de los sépalos de las flores? 
+  6.	Elija 2 variables cuantitativas (que no sean Species)
+    a.	Realice un gráfico de dispersión con esas 2 variables.
+    b.	Coloréelo según la variable a predecir Species. 
+    c.	Elija un pch y con main=”” .
+    d.	Puede agregar un título al gráfico.
+    e.	Indique cómo quedó el código R. 
+  7.	Con la instrucción iris[numFlor,] se puede obtener los datos de una flor de la base. Considere los 2 últimos números de su DNI.
+    a.	Muestre los datos de la flor de esa posición.
+    b.	¿De qué especie es esa flor? 
+    c.	Optativo: realice un esquema o dibujo de las medidas de la flor seleccionada.
+````
+
+**Parte B:** _Conjuntos_
+````
+  1.	Considere los 3 últimos dígitos de su DNI para el seteo de semilla. 
+    a.	Particione la base en un conjunto de entrenamiento y uno de testeo. 
+    b.	Además: 
+      i.	Si su DNI termina en 0, 1, 2, 3: Setee p=0.70 
+      ii.	Si su DNI termina en 4, 5, 6, 7: Setee p=0.75 
+      iii.	Si su DNI termina en 8, 9: Setee p=0.80 
+    c.	Indique el código R utilizado. 
+  2.	¿Cuántos elementos quedaron en total en el conjunto de entrenamiento y de testeo? 
+  3.	Muestre: 
+    a.	head(entreno)
+    b.	head(testeo)
+    c.	str(entreno)
+    d.	str(testeo)
+  4.	Muestre: 
+    a.	summary(iris$Species)
+    b.	summary(entrenar$Species)
+    c.	summary(testeo$Species) 
+    d.	Verifique que en entreno y testeo haya quedado el porcentaje esperado de elementos según la partición con createDataPartition. 
+  5.	Escriba entreno – Enter  y luego testeo – Enter. 
+    a.	La flor que obtuvo antes, ¿quedó en entrenamiento o en testeo?
+````
+
+# **Ejercicio 1 – Parte Teórica**
+
+## ¿Por qué es importante testear un modelo de Machine Learning?
+
+* Es importante testear un modelo de Machine Learning porque es justamente en **Test** donde se puede verificar que el algoritmo realmente aprendió lo que se le trataba de enseñar en la parte de **Train**, además de que en este apartado es donde realmente se le puede medir su verdadera performance, para luego así **deployar** el algoritmo en proyectos de la vida real.
+
+
+# **Ejercicio 2 – Parte Práctica**
+
+# Parte A: Análisis Exploratorio de Datos
+
+## Respuestas 1:
+
+* Abra el ``dataset iris``.
+
+```{r, echo=TRUE}
+data(iris)
+```
+
+* Escriba en R ``?iris`` y copie el párrafo de Description.
+```{r, echo=TRUE}
+?iris
+```
+
+````
+Description
+This famous (Fisher's or Anderson's) iris data set gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, versicolor, and virginica.
+````
+
+* **Optativo:**
+
+[https://jdvelasq.github.io/courses/_images/iris.png](https://jdvelasq.github.io/courses/_images/iris.png)
+
+![Especies de Flores Iris](https://jdvelasq.github.io/courses/_images/iris.png)
+
+## Respuestas 2:
+
+* Muestre ``dim(iris)`` y ``str(iris)``.
+```{r}
+dim(iris)
+```
+
+```{r}
+str(iris)
+```
+* El Dataset de Iris tiene 5 variables, de las cuales **Species** es la variable **_categórica cualitativa_**, y **las restantes** son las variables **_numéricas cuantitativas_**.
+
+* La variable **Species** indica la **_especie a la que pertenece la flor_**, mientras que **sepal.length & sepal width** indican el **_largo y ancho del sépalo de la flor_** y por último **Petal.Length & Petal.Width**, indican el **_largo y ancho del pétalo de la flor_**.
+
+## Respuestas 3:
+
+* Muestre ``summary(iris$Species)``.
+```{r}
+summary(iris$Species)
+```
+* Por cada especie hay **_50 flores_** en el dataset.
+
+## Respuestas 4:
+
+* Gráfico de barras de la **variable Species**:
+
+```{r}
+plot(iris$Species, main="Gráfico de Especies Iris",col=c("red", "blue", "green"))
+```
+
+## Respuestas 5:
+
+* Muestre un ``summary(iris)``.
+```{r}
+summary(iris)
+```
+
+* El largo de los sépalos de las flores se encuentra en el rango de los 4.3cm - 7.9cm.
+
+## Respuestas 6:
+
+* Elija 2 variables y grafique.
+```{r}
+# Primero importamos librerias
+library(caret)
+
+# Graficamos:
+xyplot(iris$Sepal.Length~iris$Sepal.Width, groups=iris$Species, pch=c(3,4,5),col=c("red", "blue", "green"),auto.key=TRUE, main="Largo vs Ancho de Iris Sepal",xlab="Ancho Sepal", ylab="Largo Sepal")
+```
+
+* Elegí las variables cuantitativas: **Sepal.Length & Sepal.Width** para realizar el gráfico de dispersión requerido, además para representar a cada una de las flores elegí un **_pch de 3, 4, 5_**, que representan **_un rombo, una cruz y un signo suma_**, los **_colores_** que utilicé para cada especie son el **_rojo, azul, verde_**, por último a mi gráfico le agregue un **_título: “Largo vs Ancho de Iris Sepal”_**.
+
+## Respuestas 7:
+
+* Muestre los datos de la flor de la posición: ``iris[2numDNI,]``
+
+```{r}
+flor= iris[75,]
+flor
+```
+
+* La Flor que se muestra según mis dos últimos números de mi DNI es: una **_Especie Versicolor_**
+
+* **Optativo:**
+
+[Especie Versicolor: Click Aquí](https://github.com/cescalada-lab/DataCamp/blob/main/R/Intermediate%20R/Iris_versicolor.jpg?raw=true)
+
+![Especie Versicolor](https://github.com/cescalada-lab/DataCamp/blob/main/R/Intermediate%20R/Iris_versicolor.jpg?raw=true)
+
+# Parte B: Conjuntos
+
+## Respuestas 1:
+
+* Mis 3 últimos números de mi DNI son: 575.
+* Mi último número de DNI es 5.
+* p va a ser igual a 0.75.
+* El código va a quedar:
+
+```{r}
+set.seed(575); particion=createDataPartition(y=iris$Species,p=0.75,list=FALSE)
+entreno=iris[particion,]
+testeo=iris[-particion,]
+```
+
+## Respuestas 2:
+
+* En el conjunto de Entrenamiento quedaron 114 elementos.
+
+```{r}
+dim(entreno)
+
+```
+
+* En el conjunto de Testeo quedaron 36 elementos.
+
+```{r}
+dim(testeo)
+```
+
+## Respuestas 3:
+
+* Muestre:
+
+```{r}
+# Observamos las primeras filas de Train.
+head(entreno)
+
+```
+
+```{r}
+# Observamos las primeras filas de Test.
+head(testeo)
+
+```
+
+```{r}
+# Observamos la estructura interna de Entreno.
+str(entreno)
+
+```
+
+```{r}
+# Observamos la estructura interna de Testeo.
+str(testeo)
+```
+## Respuestas 4:
+
+* Muestre:
+
+```{r}
+summary(iris$Species)
+```
+
+
+```{r}
+summary(entreno$Species)
+```
+
+
+```{r}
+summary(testeo$Species)
+```
+
+* Verifique que en entreno y testeo haya quedado el porcentaje esperado de elementos según la partición con createDataPartition. 
+
+```{r}
+# Comprobamos si el % de Train coincide con la partición creada.
+
+porcentaje= (38*3*100)/150
+cat("El Porcentaje obtenido es:",porcentaje,"%; Coincide con la partición Hecha con createDataPartition.")
+```
+
+
+```{r}
+# Comprobamos si el % de Test coincide con la partición creada.
+
+porcentaje= (12*3*100)/150 #%
+cat("El Porcentaje obtenido es:",porcentaje,"%; Coincide con la partición Hecha con createDataPartition.")
+```
+## Respuestas 5:
+
+* Escriba ``entreno – Enter``  y luego ``testeo – Enter``.
+
+```{r}
+entreno
+```
+
+```{r}
+testeo
+```
+
+* La flor que obtuvo antes, ¿quedó en entrenamiento o en testeo?
+
+```{r}
+# Verificamos si está en Train:
+entreno["75",]
+```
+
+
+```{r}
+# Verificamos si está en Test:
+testeo["75",]
+```
+
+Podemos observar en base a los datos, que la **Flor** obtenida según mis **_2 últimos números de DNI_**, quedó en el Dataset de **_Entrenamiento_**.
+
+
+## Bibliografia:
+
+* [R plot pch symbols](http://www.sthda.com/english/wiki/r-plot-pch-symbols-the-different-point-shapes-available-in-r)
+* [xyplot-xlab-ylab](https://www.rdocumentation.org/packages/lattice/versions/0.10-10/topics/xyplot)
+* [R-Graphics](https://oscarperpinan.github.io/R/graficos.html)
+* [R Markdown Cheat Sheet I](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
+* [R Markdown Cheat Sheet II](https://evoldyn.gitlab.io/evomics-2018/ref-sheets/rmarkdown-cheatsheet-2.0.pdf)
+* [Flores Iris](https://jdvelasq.github.io/courses/_images/iris.png)
+* [R Chunks](https://rpubs.com/Juve_Campos/codigoEnRMarkdown)
+* [R cat](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/cat)
+* [R print](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/print)
+* [Ejemplo Iris I](https://rpubs.com/Cristo19/645515)
+* [Ejemplo Iris II](https://rpubs.com/JorgeFigueroa/861324)
+* [YAML](https://zsmith27.github.io/rmarkdown_crash-course/lesson-4-yaml-headers.html)
+* [Markdown Themes](https://www.datadreaming.org/post/r-markdown-theme-gallery/)
+* [R Markdown tutorial](https://bookdown.org/yihui/rmarkdown/html-document.html)
+* [prettydoc](https://github.com/yixuan/prettydoc)
+
+## Anexo Código:
+
+### Parte A: Análisis Exploratorio de Datos
+
+````
+data(iris)
+?iris
+dim(iris)
+str(iris)
+summary(iris$Species)
+plot(iris$Species, main="Gráfico de Especies Iris",col=c("red", "blue", "green"))
+summary(iris)
+library(caret)
+xyplot(iris$Sepal.Length~iris$Sepal.Width, groups=iris$Species, pch=c(3,4,5),col=c("red", "blue", "green"),auto.key=TRUE, main="Largo vs Ancho de Iris Sepal",xlab="Ancho Sepal", ylab="Largo Sepal")
+flor= iris[75,]
+flor
+````
+
+### Parte B: Conjuntos:
+
+````
+set.seed(575); particion=createDataPartition(y=iris$Species,p=0.75,list=FALSE)
+entreno=iris[particion,]
+testeo=iris[-particion,]
+dim(entreno)
+dim(testeo)
+head(entreno)
+head(testeo)
+str(entreno)
+str(testeo)
+summary(iris$Species)
+summary(entreno$Species)
+summary(testeo$Species)
+(38*3*100)/150 #%
+(12*3*100)/150 #%
+entreno["75",] # esta en train
+testeo["75",]  # no está en test
+````
+
+## ¡Muchas Gracias! 
+
+![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfNJ8XJ15N-AYiNfFPnfru7GAhmLIUKm688hih_DBeWoeavaESwozis2jLuEHcoyQlTsM&usqp=CAU)
+
+
+
+
+
+
+
+
+
+
+
+
+
