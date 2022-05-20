@@ -1,5 +1,5 @@
 # Diplomatura en BIG DATA
-Repositorio de TPs y Proyectos Finales de la Diplomatura
+Repositorio de TPs y Proyectos Finales de la Diplomatura.
 
 ## Módulos:
 
