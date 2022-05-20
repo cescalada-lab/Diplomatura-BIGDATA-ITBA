@@ -357,15 +357,3 @@ testeo["75",]  # no está en test
 
 ![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfNJ8XJ15N-AYiNfFPnfru7GAhmLIUKm688hih_DBeWoeavaESwozis2jLuEHcoyQlTsM&usqp=CAU)
 
-
-
-
-
-
-
-
-
-
-
-
-
