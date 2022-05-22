@@ -1,4 +1,7 @@
 
 # Carpeta de Trabajos En Clase:
 
-* Crabs
+* Crabs EDA
+* Crabs DT
+* File management in R
+* Zoo EDA & DT
