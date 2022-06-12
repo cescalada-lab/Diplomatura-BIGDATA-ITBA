@@ -1,6 +1,8 @@
 # Diplomatura en BIG DATA
 Repositorio de TPs y Proyectos Finales de la Diplomatura.
 
+![](https://github.com/cescalada-lab/Diplomatura-BIGDATA-ITBA/blob/main/ITBA_LOGO.png)
+
 ## Módulos:
 
 1.	Data Darehousing & OLAP.
