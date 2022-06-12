@@ -1,0 +1,174 @@
+---
+title: "Análisis Exploratorio de Datos"
+subtitle: "Crabs Dataset"
+author: "Escalada Christian"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: vignette
+---
+
+```{r}
+# Cargamos Librerías:
+library(MASS)
+data(crabs)
+
+# Preprocesamos Dataset:
+crabs$index=NULL
+crabs$sex=NULL
+
+# Visualizamos Dataset:
+head(crabs)
+```
+
+### Dataset crabs de MASS
+
+1. ¿De qué especie son los cangrejos? 
+
+```{r}
+?crabs
+```
+
+* Los Cangrejos pertenecen a la especie: **_Leptograpsus variegatus_**
+
+2. Buscar una imagen de un cangrejo.
+
+![Imagen de cangrejo](https://www.aquariumcostadealmeria.com/wp-content/uploads/2019/04/shutterstock_256752703.jpg)
+
+### Base de Datos
+
+1. Hacer un ``fix(crabs)``.
+```{r}
+fix(crabs)
+```
+
+2. ¿Cuál es la variable a predecir y cuáles las variables predictoras?
+
+```{r}
+names(crabs)
+```
+
+* La Variable a predecir es ``sp``.
+* Las Variables predictoras son todas las demás.
+
+### Análisis Exploratorio de Datos
+
+1. Hacer un ``summary(crabs)`` y un ``str(crabs)``.
+
+```{r}
+summary(crabs)
+
+str(crabs)
+```
+
+2. ¿Cuántos registros tiene la base? ¿De qué tipo son las variables?
+
+* El Dataset tiene 200 registros, son de tipo categóricas y numéricas.
+
+3. Hacer un ``summary(crabs$sp)``
+
+```{r}
+summary(crabs$sp)
+```
+
+4. ¿Cuántos registros por categoría tiene la base?
+
+* El Dataset tiene 100 registros por categoría.
+
+### Gráficos
+
+```{r, include=FALSE} 
+# se ejecuta sin mostrar ni código, ni la ejecución.
+data.frame(crabs)
+```
+
+1. Realizar un Histograma de la variable Largo del caparazón.
+
+```{r}
+hist(crabs$CL)
+```
+
+2. ¿En qué rango se encuentra el largo de los caparazones?
+
+```{r}
+range(crabs$CL)
+```
+
+* El Largo de los caparazpnes de los cangrejos se encuentran entre: ``14.7mm - 47.6mm``.
+
+3. Realizar un histograma cambiando el título y colores del gráfico.
+
+```{r}
+hist(crabs$CL, main="Cangrejos", col=rainbow(20))
+```
+
+4. Realizar un Gráfico de Barras de la variable a predecir.
+
+```{r}
+col=c("blue","orange")
+plot(crabs$sp, main="Cangrejos", col=col)
+```
+
+### Gráficos con la librería caret
+
+```{r, include = FALSE}
+library(caret)
+```
+
+1. Realizar un Gráfico de Dispersión de las variables Largo y Ancho de caparazón con caret.
+
+```{r}
+xyplot(crabs$CL~crabs$CW,main="Largo vs Ancho de caparazón",sub="Source: Crabs Dataset",)
+```
+
+* ¿qué variable quedó en X y cuál en en el eje Y?
+    * El Largo del Caparazón quedó en el eje **X**.
+    * El Ancho del Caparazón quedó en el eje **Y**.
+  
+2. Realizar el mismo gráfico pero coloreado por la variable a predecir.
+
+```{r}
+xyplot(crabs$CL~crabs$CW,groups=crabs$sp, col=c("blue","orange"),
+       main="Largo vs Ancho de caparazón",sub="Source: Crabs Dataset",)
+```
+  
+3. Realizar el mismo gráfico pero con pch=19 ¿qué hace eso?
+
+```{r}
+xyplot(crabs$CL~crabs$CW,groups=crabs$sp,pch=19, col=c("blue","orange"),
+       main="Largo vs Ancho de caparazón",sub="Source: Crabs Dataset",)
+```
+
+4. Probar varios pch numéricos y con por ejemplo pch=“#”.
+
+```{r}
+xyplot(crabs$CL~crabs$CW,groups=crabs$sp,pch="#", col=c("blue","orange"),
+       main="Largo vs Ancho de caparazón",sub="Source: Crabs Dataset",)
+```
+
+5. Agregar la leyenda al gráfico (es decir, qué es cada color) con auto.key
+
+```{r}
+# par.settings te cambia e color y la forma del auto.key
+
+xyplot(crabs$CL~crabs$CW,groups=crabs$sp,pch=c(4,3),auto.key=TRUE,
+       par.settings=simpleTheme(col=c("blue","orange"),pch=c(4,3)), 
+       col=c("blue","orange"),main="Largo vs Ancho de caparazón",
+       xlab="Ancho Caparazón", ylab="Largo Caparazón",)
+```
+
+### Bibliografía:
+
+1. [RMarkdown básico](http://www.unavarra.es/personal/tgoicoa/ESTADISTICA_RMarkdown_tomas/basicRmarkdown/index.html#14_cuerpo_del_documento)
+2. [Introducción al uso de Rmarkdown](https://rpubs.com/tereboca/informe_rmakrdown)
+3. [¿Qué es RMarkdown y para qué sirve?](https://bookdown.org/gboccardo/manual-ED-UCH/introduccion-al-uso-de-rmarkdown-para-la-compilacion-de-resultados-de-rstudio-en-diferentes-formatos.html#que-es-rmarkdown-y-para-que-sirve)
+4. [Code Chunks](https://rmarkdown.rstudio.com/lesson-3.html)
+5. [xyplot pch](http://www.sthda.com/english/wiki/r-plot-pch-symbols-the-different-point-shapes-available-in-r)
+6. [par.settings](https://stat.ethz.ch/pipermail/r-help/2009-February/381379.html)
+
+
+# *_Muchas Gracias!!!_*
+
+![](https://images.emojiterra.com/twitter/v13.1/512px/1f980.png)
+

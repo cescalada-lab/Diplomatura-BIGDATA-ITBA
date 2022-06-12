@@ -1,0 +1,182 @@
+---
+title: "Árboles de Decisión"
+subtitle: "Zoo Dataset"
+author: "Escalada Christian"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<p align="center">
+   <img src="https://github.com/cescalada-lab/Diplomatura-BIGDATA-ITBA/blob/main/ITBA_LOGO.png?raw=true" />
+</p>
+
+
+# Cargamos Dataset.
+
+```{r}
+library(mlbench)
+data(Zoo)
+```
+
+# Observamos el Dataset.
+
+```{r}
+fix(Zoo)
+```
+
+* Vemos que El **Ser Humano** se encuentra en este Dataset.
+
+# Sacamos al ser humano del Dataset.
+
+```{r}
+Zoo=Zoo[-30,] 
+```
+
+# Observamos nuevamente el Dataset.
+
+```{r}
+str(Zoo)
+```
+
+```{r}
+dim(Zoo)
+```
+
+```{r}
+names(Zoo)
+```
+
+* Vemos que **legs** es una variable numérica.
+* Vemos que hay **100** observaciones con 17 features de entrada.
+
+# Pasamos Legs a Variable Categórica.
+
+```{r}
+Zoo$legs=factor(Zoo$legs)
+
+str(Zoo["legs"]) #--> Ahora es Categórica.
+```
+
+# Buscamos Algún Outlier.
+
+```{r}
+summary(Zoo$legs)
+```
+* Vemos que hay un Animal con 5 patas.
+
+```{r}
+Zoo[Zoo$legs=="5",]
+```
+
+* Vemos que ese Animal es el **Pez Estrella**.
+
+# Particionamos el Dataset en Train y Test
+# [75% - 25%].
+
+```{r}
+# Cargamos librerias
+library(caret)
+
+# Creamos la Partición
+set.seed(123);particion=createDataPartition(y=Zoo$legs,p=0.75,list=FALSE)
+
+# Asignamos las Particiones a train & Test
+entreno=Zoo[particion,]
+testeo=Zoo[-particion,]
+```
+
+# Comparamos las Particiones:
+
+```{r}
+dim(Zoo)
+```
+
+```{r}
+dim(entreno)
+```
+
+```{r}
+dim(testeo)
+```
+
+# Observamos Los Datasets:
+
+```{r}
+summary(Zoo$legs) 
+```
+
+```{r}
+summary(entreno$legs) 
+```
+
+```{r}
+summary(testeo$legs)
+```
+
+# Ahora vamos a crear nuestro Árbol de Decisión.
+```{r, echo=FALSE}
+# arbol=rpart(varAPred~variables predictoras,entreno,method="class")
+# . significa que elija todos los demas
+```
+
+
+```{r}
+# Cargamos Libreria
+library(rpart)
+
+# Creamos el AdD
+arbol=rpart(legs~. ,entreno,method="class") 
+arbol
+```
+# Dibujamos el Árbol de Decisión.
+
+```{r}
+# Cargamos Libreria
+library(rpart.plot)
+
+# Graficamos
+rpart.plot(arbol,extra=1,type=5)
+```
+
+# Testeamos el AdD para medir su **Performance**
+
+```{r}
+predzoo=predict(arbol,Zoo,type="class") 
+predzoo  
+```
+
+# Anexo:
+
+#### Librerias a Instalar:
+
+````
+install.packages("rpart.plot")
+install.packages("rpart")
+install.packages("mlbench")
+install.packages("caret")
+````
+
+
+# Muchas Gracias.
+
+![](https://stickershop.line-scdn.net/sticonshop/v1/product/5d6b3441031a673167f6996d/iPhone/main.png)
+
+# Bibliografia:
+
+[Pretty Docs](https://github.com/yixuan/prettydoc/)
+
+# Muchas Gracias!
+
+
+
+
+
+
+

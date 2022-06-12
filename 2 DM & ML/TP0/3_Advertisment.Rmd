@@ -1,0 +1,89 @@
+---
+title: "Archivos en R"
+subtitle: "Advertising Dataset"
+author: "Escalada Christian"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: vignette
+---
+
+<p align="center">
+   <img src="https://github.com/cescalada-lab/Diplomatura-BIGDATA-ITBA/blob/main/ITBA_LOGO.png?raw=true" />
+</p>
+
+# Dataset ``Advertising.csv``.
+
+#### 1. Busque la página del libro ISLR de Hastie et al. y baje el archivo **Advertising.csv** en la carpeta de trabajo de **R**.
+
+[Descargar Dataset Aquí](https://www.statlearning.com/s/Advertising.csv)
+
+```{r}
+# En mi caso Advertising.csv está ubicado en:
+Advertising = "C:/Users/USUARIO/Documents/Advertising.csv"
+```
+
+#### 2. Visualice el archivo con un Bloc de Notas. ¿Qué símbolo separa los datos? 
+
+* Los datos son separados por comas.
+
+# Carga de archivo con ``read.table``.
+
+#### 1. Levante el archivo en R con la instrucción.
+
+```{r}
+base= read.table (Advertising)
+```
+
+#### 2. Vea un head(base) ¿se cargó bien la base? ¿Qué faltó cargarse?
+
+```{r}
+head(base)
+```
+
+#### 3. Levante el archivo en R con la instrucción
+
+```{r}
+base=read.table(Advertising, sep=",")
+```
+
+#### 4. Vea un head(base) ¿se cargó bien la base? ¿Qué faltó cargarse?
+
+```{r}
+head(base)
+```
+#### 5. Levante el archivo en R con la instrucción
+
+```{r}
+base=read.table(Advertising, sep=",", header=TRUE)
+```
+
+#### 6. Vea un head(base) ¿se cargó bien la base? ¿Para qué sirve “ header ”?
+
+```{r}
+head(base)
+```
+
+# Carga de archivo con read.csv
+
+#### 1. Levante el archivo en R con la instrucción
+
+```{r}
+base=read.csv("C:/Users/USUARIO/Documents/Advertising.csv")
+```
+
+#### 2. Vea un head(base) ¿se cargó bien la base?
+
+```{r}
+head(base)
+```
+
+# Bibliografia:
+
+[Pretty Docs](https://github.com/yixuan/prettydoc/)
+
+# Muchas Gracias!
+
+
+

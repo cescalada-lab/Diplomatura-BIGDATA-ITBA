@@ -1,0 +1,58 @@
+---
+title: "Árboles de Decisión"
+subtitle: "Poda de Árbol"
+author: "Escalada Christian"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: vignette
+---
+
+# Probamos Poda con Iris Dataset:
+
+```{r}
+library(caret)
+library(rpart)
+library(rpart.plot)
+set.seed(123);part=createDataPartition(y=iris$Species,p=0.7,list=F)
+
+entreno=iris[part,]
+testeo=iris[-part,]
+arbol=rpart(Species~.,entreno,method="class")
+rpart.plot(arbol,extra=1,type=5)
+arbol$control
+
+arbolGrande=rpart(Species~.,entreno,method="class",minsplit=0,cp=0)
+rpart.plot(arbolGrande,extra=1,type=5)
+```
+
+# Probamos Poda con Zoo Dataset: 
+
+```{r}
+library(mlbench)
+data(Zoo)
+fix(Zoo)
+
+Zoo=Zoo[-30,]
+#arbolZoo=rpart(~.,entreno,method="class")
+Zoo$legs=factor(Zoo$legs)
+
+arbolZoo=rpart(legs~.,Zoo,method="class")
+rpart.plot(arbolZoo,extra=1,type=5)
+
+arbolZooGrande=rpart(legs~.,Zoo,method="class",cp=0,minsplit=0)
+rpart.plot(arbolZooGrande,extra=1,type=5)
+plotcp(arbolZooGrande,cex=0.5)
+
+arbolPodado6=prune(arbolZooGrande,cp=0.021)
+arbolPodado12=prune(arbolZooGrande,cp=0.01)
+rpart.plot(arbolPodado6,extra=1,type=5)
+rpart.plot(arbolPodado12,extra=1,type=5)
+```
+
+
+# Bibliografias
+* [Prune Trees with R I](https://stats.stackexchange.com/questions/105187/how-to-prune-a-decision-tree-properly-in-r)
+* [Prune Trees with R II](https://stackoverflow.com/questions/15318409/how-to-prune-a-tree-in-r)
+* [Pretty Docs](https://github.com/yixuan/prettydoc/)

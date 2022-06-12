@@ -1,0 +1,126 @@
+---
+title: "Árboles de Decisión VS Red Neuronal"
+subtitle: "Iris Dataset"
+author: "Escalada Christian"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: vignette
+---
+
+# Parte I - Preprocesamiento
+
+```{r}
+# Cargamos Librerías:
+library(caret)
+
+# Cargamos Dataset:
+data(iris)
+
+# Mostramos el Dataset:
+head(iris)
+
+# Creo partición al 70% - 30% y asigno semilla.
+set.seed(123) ; particion= createDataPartition(y=iris$Species, p=0.7, list=FALSE)
+entreno= iris[particion,]
+testeo= iris[-particion,]
+
+```
+
+# Parte II - Árbol de Decisión.
+ 
+```{r}
+# Cargamos Librerías:
+library(rpart)
+library(rpart.plot)
+
+# creamos un AdD:
+arbol=rpart(Species~.,entreno,method="class") 
+
+# Graficamos el AdD:
+rpart.plot(arbol,extra=1,type=5,cex=1)
+
+# Testeamos el modelo:
+pred_AdD=predict(arbol,testeo,type="class")
+
+# Armamos la Matriz de Confusión:
+confusionMatrix(pred_AdD,testeo$Species)
+``` 
+
+# Parte III - Red Neuronal.
+
+```{r}
+# Importamos Librerías:
+library(nnet)
+library(NeuralNetTools)
+
+# creamos una RN:
+red=nnet(Species~.,entreno,size=10,maxit=10000)
+
+# Graficamos la RN:
+plotnet(red,
+        circle_col = "darksalmon",  
+        pos_col = "pink",
+        neg_col = "grey",
+        bord_col = "darkred",
+        circle_cex=5,
+        alpha_val=1,
+        cex_val=1,
+        cex=15,
+        max_sp= TRUE)
+
+# Testeamos el modelo:
+pred_red=predict(red,testeo,type="class")
+
+# Armamos la Matriz de Confusión:
+confusionMatrix(factor(pred_red),testeo$Species)
+
+```
+
+# Parte IV - Comparación:
+
+|Variedad|AdD Accuracy|RN Accuracy|AdD Sensibilidad|RN Sensibilidad |AdD Especificidad|RN Especificidad |
+|:-------|:----------:|:---------:|:--------------:|:--------------:|:---------------:|:---------------:|
+|**setosa**|0.9333    |0.9778     |1.0000          |1.0000          |1.0000           |1.0000           |
+|**versicolor**|0.9333|0.9778     |0.9333          |1.0000          |0.9333           |0.9667           |
+|**virginica**|0.9333 |0.9778     |0.8667          |0.9333          |0.9667           |1.0000           |
+
+
+* Podemos observar que en este ejercicio, la **RN** tiene una mejor Performance respecto a AdD, por lo tanto sus predicciones son mas confiables.
+
+# Bibliografia:
+
+[Pretty Docs](https://github.com/yixuan/prettydoc/)
+
+# Muchas Gracias!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

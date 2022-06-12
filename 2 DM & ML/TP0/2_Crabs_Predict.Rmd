@@ -1,0 +1,232 @@
+---
+title: "Árboles de Decisión"
+subtitle: "Crabs Dataset"
+author: "Escalada Christian"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: vignette
+---
+
+### Preprocesamiento de Datos
+
+#### Se tiene la base crabs para predecir, dado un cangrejo, si es de la especie Orange o Blue.
+1. Cargar la ``library(MASS)`` y el dataset ``data(crabs)``.
+
+```{r}
+# Cargamos Librerías:
+library(MASS)
+data(crabs)
+library(caret)
+```
+
+2. Borrar las variables categóricas y dejar solo **sp**.
+
+```{r}
+# Preprocesamos Dataset:
+crabs$index=NULL
+crabs$sex=NULL
+```
+
+### Dataset Crabs de MASS
+
+#### Responder brevemente:
+
+1. ¿Cuál es la variable a predecir y cuáles las variables predictoras?
+
+```{r}
+# Visualizamos Dataset:
+head(crabs)
+```
+
+* La Variable a predecir es **sp**.
+* Las Variables predictoras son todas **las demás**.
+
+2. ¿Cuántos registros tiene la base y cuántos registros por categoría?
+
+
+```{r}
+dim(crabs)
+```
+
+* El Dataset tiene **200** registros.
+
+```{r}
+summary(crabs$sp)
+```
+
+* El Dataset tiene **100** registros por categoría.
+
+### Partición en ENTRENAMIENTO y TESTEO
+
+1. Particione el dataset en entreno y testeo. 
+    * El parámetro **p** se refiere al porcentaje esperado para entrenar 
+    (**0.7**, **0.75** o **0.8**).
+
+```{r}
+# Creo partición al 70% - 30% y asigno semilla.
+set.seed(123);particion=createDataPartition(y=crabs$sp,p=0.7,list=FALSE)
+entreno=crabs[particion,]
+testeo=crabs[-particion,]
+```
+
+2. ¿Por qué se indica“-particion” para testeo?
+
+* ``[-particion]``significa que a la variable **testeo** se le va a asignar lo que quede de la partición hecha al dataset crabs, en nuestro caso sería **30%**.
+
+#### Compare:
+
+```{r}
+summary(crabs$sp)
+```
+
+```{r}
+summary(entreno$sp)
+```
+
+```{r}
+summary(testeo$sp)
+```
+
+3 ¿Quedó el porcentaje esperado en cada conjunto?
+
+  * Si, los porcentajes se asignaron según lo esperado.
+
+#### Vea los datos del cangrejo 30
+
+4.1. ¿De qué especie es?
+
+```{r}
+cangrejo=crabs[30,] #--> te busca el indice 30
+cangrejo
+```
+
+* El cangrejo es de la especie **Blue**.
+
+4.2. ¿Quedó en entrenamiento o en testeo?
+
+```{r}
+entreno["30",] #--> te busca el nombre "30" este en el indice que sea.
+
+```
+
+```{r}
+testeo["30",] #--> te busca el nombre "30" este en el indice que sea.
+
+```
+
+* El **cangrejo 30** quedó en la partición de **Entrenamiento**.
+
+### Árbol de Decisión
+
+```{r}
+# Cargamos librerias:
+library(rpart)
+library(rpart.plot)
+```
+
+1. Cree un Árbol de Decisión para predecir la especie de los cangrejos.
+
+```{r}
+arbol=rpart(sp~.,entreno,method="class")
+```
+
+
+2. Dibuje el Árbol de Decisión.
+
+```{r}
+rpart.plot(arbol,extra=1,type=5)
+```
+
+
+3. Prediga la especie del cangrejo 30, ¿coincide con lo esperado?
+
+```{r}
+predCangre30=predict(arbol,cangrejo,type="class")
+predCangre30
+```
+* El Árbol predice que va a ser un Cangrejo Azul, Coincide con lo Esperado. 
+
+4. ¿Qué sucede si no se setea type="class" en el predict?
+
+```{r}
+pred2=predict(arbol,cangrejo)
+pred2
+```
+* Si no se setea ``type= "class"`` el predict te devuelve el porcentaje de certeza con que predeciría la clase a la que pertenece el Cangrejo.
+
+### Árbol de Decisión - Continuación
+
+1. Considere un cangrejo nuevo. Determine sus medidas y cree un
+data.frame
+
+```{r}
+cangrejoNuevo=data.frame(FL=15.0,RW=12,CL=35,CW=40,BD=16)
+```
+
+2. Vea el gráfico del AdD y prediga la especie del cangrejo nuevo
+siguiendo las distintas ramas del mismo.
+
+```{r}
+rpart.plot(arbol,extra=1,type=5)
+```
+
+* Según la Gráfica, el Cangrejo Nuevo debería ser **Azul**.
+
+3. Prediga la especie del cangrejo nuevo con predict. ¿Coincide con el
+punto anterior?
+
+```{r}
+predNuevo=predict(arbol,cangrejoNuevo,type="class")
+predNuevo
+```
+* La predicción hecha por el AdD Indica que el **Cangrejo Nuevo** debería ser **Azul**, por lo que **coincide** con la Gráfica del AdD del punto anterior.
+
+### Testeo del modelo
+
+1. Prediga con el Árbol de Decisión los valores de testeo
+
+```{r}
+pred=predict(arbol,testeo,type="class")
+pred
+```
+
+2. Cree la matriz de confusión y los cálculos asociados
+
+```{r}
+confusionMatrix(pred,testeo$sp)
+```
+
+3. Calcule el accuracy como diagonal/total. ¿Coincide con el valor
+de accuracy que dio R?
+
+```{r}
+Acc= (25+28) / (25+28+5+2)
+```
+
+```{r, echo=FALSE}
+cat("El Accuracy Obtenido Fué:",Acc,"que coincide con el Accuracy que calculó R.")
+```
+
+4. ¿Qué fue mayor la sensibilidad o la especificidad?
+
+* Fué **Mayor** la **Especificidad** con un **0.9333** que la Sensibilidad.
+
+
+### Bibliografía:
+
+1. [RMarkdown básico](http://www.unavarra.es/personal/tgoicoa/ESTADISTICA_RMarkdown_tomas/basicRmarkdown/index.html#14_cuerpo_del_documento)
+2. [Introducción al uso de Rmarkdown](https://rpubs.com/tereboca/informe_rmakrdown)
+3. [¿Qué es RMarkdown y para qué sirve?](https://bookdown.org/gboccardo/manual-ED-UCH/introduccion-al-uso-de-rmarkdown-para-la-compilacion-de-resultados-de-rstudio-en-diferentes-formatos.html#que-es-rmarkdown-y-para-que-sirve)
+4. [Code Chunks](https://rmarkdown.rstudio.com/lesson-3.html)
+5. [xyplot pch](http://www.sthda.com/english/wiki/r-plot-pch-symbols-the-different-point-shapes-available-in-r)
+6. [par.settings](https://stat.ethz.ch/pipermail/r-help/2009-February/381379.html)
+7. [Matriz de Confusión](https://es.wikipedia.org/wiki/Matriz_de_confusión#:~:text=En%20el%20campo%20de%20la,se%20emplea%20en%20aprendizaje%20supervisado.)
+8. [Center Images in Markdown](https://stackoverflow.com/questions/12090472/how-do-i-center-an-image-in-the-readme-md-file-on-github)
+
+
+# *_Muchas Gracias!!!_*
+
+
+![](https://images.emojiterra.com/twitter/v13.1/512px/1f980.png)

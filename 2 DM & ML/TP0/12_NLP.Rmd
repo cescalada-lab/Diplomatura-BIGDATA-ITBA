@@ -1,0 +1,154 @@
+---
+title: "Procesamiento del Lenguaje Natural"
+subtitle: "Aves y Plantas Wikipedia"
+author: "Christian Escalada"
+date: "07/06/2022"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: vignette
+---
+
+# Analisis de Texto.
+
+```{r}
+# Cargamos Libreria
+library(tm)
+library(wordcloud)
+
+# Cargamos Texto
+#original=readLines("C:/Users/USUARIO/Documents/Universidad/ITBA/BIG DATA/2 Data Mining/7 Dataframes/frases.txt",encoding="UTF-8")
+original=readLines("frases.txt",encoding="UTF-8")
+
+# Mostramos Contenido
+original
+```
+
+# Corpus.
+
+```{r}
+# Creamos el Corpus
+corpus=VCorpus(VectorSource(original))
+
+# Mostramos el Corpus
+corpus
+```
+
+```{r}
+# Comparamos Parrafo Original
+original[3]
+
+# Parrafo del Corpus
+as.character(corpus[[3]])
+```
+
+# Transformations
+
+```{r}
+# Vemos que se puede remover del Corpus
+getTransformations()
+```
+
+```{r}
+#Transformamos todo a minúsculas
+corpus=tm_map(corpus, content_transformer(tolower))
+
+# Comparamos
+original[3]
+as.character(corpus[[3]]) 
+```
+
+```{r}
+# Eliminamos Puntuaciones
+corpus=tm_map(corpus, removePunctuation)
+original[3]
+as.character(corpus[[3]]) 
+```
+
+```{r}
+# Eliminamos Números
+corpus=tm_map(corpus, removeNumbers)
+original[3]
+as.character(corpus[[3]]) 
+```
+
+
+```{r}
+# Eliminamos #espacios en blancos extra
+corpus=tm_map(corpus, stripWhitespace)
+original[3]
+as.character(corpus[[3]]) 
+```
+
+# Stopwords.
+
+```{r}
+# Determinamos Stopwords para Castellano
+vector= stopwords("spanish")
+vector
+```
+
+```{r}
+# Comparamos
+corpusSinStopwords=tm_map(corpus, removeWords, stopwords("spanish"))
+original[3]
+as.character(corpus[[3]])
+as.character(corpusSinStopwords[[3]])
+```
+
+# Nubes de Palabras.
+
+```{r}
+# Graficamos Nube de Palabras
+library(wordcloud)
+wordcloud(corpus)
+```
+
+* WordCloud sin StopWords:
+
+```{r ,include=TRUE}
+wordcloud(corpusSinStopwords)
+```
+
+* Coloreamos el WordCloud:
+
+```{r, include=TRUE}
+wordcloud(corpus,col=rainbow(10))
+```
+
+* Palabras que aparezcan por lo menos 100 veces:
+
+```{r, include=TRUE}
+wordcloud(corpus,col=rainbow(100),min.freq=100)
+```
+
+* Palabras que aparezcan por lo menos 1 vez:
+
+```{r, include=TRUE}
+wordcloud(corpus,col=rainbow(100),min.freq=1)
+```
+
+# Bag of Words.
+
+```{r}
+# Ahora Creamos Bag Of Words
+bolsa=DocumentTermMatrix(corpus)
+bolsa=as.matrix(bolsa) 
+```
+
+```{r}
+# Observamos nuestro BOW
+dim(bolsa)
+```
+
+# Librerias:
+
+````
+install.packages("tm")
+install.packages("wordcloud")
+
+library("tm")
+library(wordcloud)
+````
+
+

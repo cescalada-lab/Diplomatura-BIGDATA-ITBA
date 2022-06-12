@@ -1,0 +1,238 @@
+---
+title: "Regresión Lineal"
+subtitle: "Advertising Dataset"
+author: "Christian Escalada"
+date: "07/06/2022"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: vignette
+---
+
+<center> <h1>Presentación del caso</h1> </center>
+
+<p align="center">
+
+   _Se tiene la base [Advertising.csv](https://www.statlearning.com/s/Advertising.csv) de la página web del libro ["Introduction to Statistical Learning with Applications in R"](https://www.statlearning.com)_.[^1]
+   _El objetivo es realizar varios modelos de ML para comparar y determinar cuál dió un menor ECM._
+</p>
+
+[^1]: Autores: (Witten, Hastie, Tibshirani)
+
+$$\\[1in]$$
+
+<center> <h1>Análisis Exploratorio de Datos</h1> </center>
+
+$$\\[1in]$$
+
+
+### 1. Muestre un head(base) ¿qué tiene como valores la variable X?
+
+```{r}
+# Cargamos Dataset
+base=read.csv("Advertising.csv" , sep= ",", header = TRUE)
+
+# Mostramos head
+head(base)
+```
+
+
+* La Variable X tiene valores de Índices.
+
+### 2. Borre la variable “X”
+
+```{r}
+# Borramos X
+base$X=NULL
+
+# Mostramos head
+head(base)
+```
+
+### 3. La variable a predecir es sales, ¿cuáles son las variables predictoras?
+
+* Variables predictoras: TV, radio, newspaper, sales.
+
+### 4. Realice un gráfico de dispersión de una variable predictora en x y la variable a predecir en y. Indique el código R utilizado. ¿Parecen altamente correlacionadas entre sí?
+
+```{r}
+# Cargamos Dataset
+library(caret)
+
+# Graficamos
+xyplot(sales~TV,base,pch="*")
+```
+
+* Se observa un fuerte correlación entre si.
+
+$$\\[1in]$$
+
+<center> <h1>Partición del dataset</h1> </center>
+
+$$\\[1in]$$
+
+### 5. Particione el dataset en los conjuntos de entrenamiento y testeo.
+
+```{r}
+# El código va a quedar:
+set.seed(123);particion=createDataPartition(y=base$sales,p=0.75,list=FALSE)
+
+entreno= base[particion,]
+testeo=  base[-particion,]
+```
+
+$$\\[1in]$$
+
+<center> <h1>Regresión Lineal</h1> </center>
+
+$$\\[1in]$$
+
+### 6. Modele el problema con una Regresión Lineal.
+
+```{r}
+set.seed(123);reg = lm(sales ~.,entreno)
+summary(reg)
+reg
+```
+
+* Calcule la fórmula de la Regresión Lineal.
+
+```{r}
+#sales=b1*var1+...+bn*varn+intercept
+sales= 0.044784*base$TV + 0.190676*base$radio + 0.004029*base$newspaper + 2.807896
+```
+
+### 7. Calcule el Error Cuadrático Medio.
+
+```{r}
+pred=predict( reg,testeo)
+ECMRL=mean((pred-testeo$sales)^2)
+ECMRL
+```
+
+$$\\[1in]$$
+
+<center> <h1>Red Neuronal</h1> </center>
+
+$$\\[1in]$$
+
+### 8. Modele el problema con una Red Neuronal con size=10
+
+```{r}
+# Cargamos Libreria
+library(nnet)
+
+#Creamos RN
+set.seed(123);red=nnet(sales~.,entreno,size=10,maxit=10000,linout=TRUE) #linout=TRUE por ser REGR
+```
+
+### 9) Calcule el Error Cuadrático Medio.
+
+```{r}
+pred=predict(red, testeo) #sin type=“class”
+ECMRN=mean((pred-testeo$sales)^2)
+ECMRN
+```
+
+### Dibuje la RN.
+
+```{r}
+# Cargamos Libreria
+library(NeuralNetTools)
+
+# Graficamos
+plotnet(red)
+```
+
+
+$$\\[1in]$$
+
+<center> <h1>Árbol de Decisión</h1> </center>
+
+$$\\[1in]$$
+
+### 10. Modele el problema con Árbol de Decisión.
+
+```{r}
+library(rpart)
+set.seed(123); arbol=rpart(sales~., entreno) #SIN method=“class”!!!
+```
+
+### 11. Calcule el Error Cuadrático Medio.
+
+```{r}
+pred=predict(arbol, testeo) #sin type=“class”
+ECMArbol=mean((pred-testeo$sales)^2)
+ECMArbol
+```
+
+### Dibuje el AdD rpart.plot(arbol,extra=1,type=5)
+
+```{r}
+library(rpart.plot)
+rpart.plot(arbol,extra=1,type=5)
+```
+
+$$\\[1in]$$
+
+<center> <h1>Support Vector Machine</h1> </center>
+
+$$\\[1in]$$
+
+### 12. Modele el problema con una Support Vector Machine.
+
+```{r}
+library(e1071)
+svm=svm(sales~., entreno,kernel="polynomial")
+```
+
+### 13. Calcule el Error Cuadrático Medio.
+
+```{r}
+pred=predict(svm, testeo)
+ECMSVM1=mean((pred-testeo$sales)^2)
+ECMSVM1
+```
+
+### 14. Pruebe con otros kernels.
+
+* Kernel = Radianes:
+
+```{r}
+svm=svm(sales~., entreno,kernel="radial")
+pred=predict(svm, testeo)
+ECMSVM2=mean((pred-testeo$sales)^2)
+ECMSVM2
+```
+
+* Kernel = linear:
+
+```{r}
+svm=svm(sales~., entreno,kernel="linear")
+pred=predict(svm, testeo)
+ECMSVM3=mean((pred-testeo$sales)^2)
+ECMSVM3
+```
+
+* Kernel = sigmoid:
+
+```{r}
+svm=svm(sales~., entreno,kernel="sigmoid")
+pred=predict(svm, testeo)
+ECMSVM4=mean((pred-testeo$sales)^2)
+ECMSVM4
+```
+
+### ¿Cuál modelo dio menor ECM?
+
+* El modelo que dió menor ECM fué la **Red Neuronal** con un ECM de **0.13**.
+
+$$\\[1in]$$
+
+# ¡Muchas Gracias!.
+
+$$\\[1in]$$
+
+
+
+

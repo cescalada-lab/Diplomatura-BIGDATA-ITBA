@@ -1,0 +1,193 @@
+---
+title: "Aprendizaje No Supervisado"
+subtitle: "Iris Dataset"
+author: "Escalada Christian"
+date: "02-06-2022"
+output:
+  rmdformats::material:
+    highlight: tango
+---
+
+# Agrupamiento k-means - Parte I.
+
+### 1. Realice un kmeans de ``iris`` en **3** grupos.
+```
+# Ejecutar con Cuidado - Va da dar Error.
+set.seed(12);km=kmeans(iris,3)
+```
+
+#### ¿Por qué dio error?
+
+* Dió error por que habían variables Categóricas que no se pueden Agrupar.
+
+### 2. Haga una copia de iris y bórrele la variable Categórica.
+
+```{r}
+# Cargo Libreria
+library(MASS)
+
+# Cargo Dataset
+data("iris")
+
+# Instancio el Dataset
+base=iris
+
+# Elimino Variable Categórica
+base$Species=NULL
+```
+
+# Agrupamiento k-means - Parte II.
+
+### 3. Realice un agrupamiento kmeans de iris en 3 grupos.
+
+```{r}
+set.seed(123);km=kmeans(base,3)
+```
+
+### 4. ¿Cuántos elementos quedaron en cada grupo?
+
+```{r}
+km$size
+```
+
+### 5. ¿En qué grupo quedó la flor 10?
+
+```{r}
+km$cluster
+```
+
+### 6. En promedio, ¿qué grupo tiene pétalos más largos?
+
+```{r}
+km$centers
+```
+
+# Agrupamiento k-means - Parte III.
+
+### 7.a. Realice un gráfico de dispersión de pétalos coloreado por los grupos.
+
+```{r}
+attach(base)
+plot(Petal.Length,Petal.Width,pch=19,col=km$cluster)
+```
+
+### 7.b. Identifique los centroides.
+
+```{r}
+attach(base)
+plot(Petal.Length,Petal.Width,pch=19,col=km$cluster)
+points(km$centers[,c("Petal.Length","Petal.Width")],pch=8,col=1:3,cex=5)
+```
+
+# Agrupamiento k-means - Parte IV.
+
+### 7.c. Realice un gráfico de dispersión de pétalos coloreado por los grupos e identifique los centroides.
+
+```{r}
+# Estos 3 Códigos se tienen que ejecutar juntos si no, no funciona.
+
+plot(Petal.Length,Petal.Width,col="white")
+text(Petal.Length,Petal.Width,label=km$cluster,col=km$cluster)
+points(km$centers[,c("Petal.Length","Petal.Width")],pch=8,col=1:3,cex=5)
+```
+
+# Otros Graficos.
+
+```{r}
+#Ejemplos de boxplot de variable separado por grupos
+boxplot(Petal.Length~km$cluster)
+```
+
+
+```{r}
+library(caret)
+boxplot(Petal.Length~km$cluster)
+featurePlot(base,y=as.factor(km$cluster),plot="boxplot",auto.key=TRUE)
+```
+
+```{r}
+featurePlot(base,y=as.factor(km$cluster),plot="density",auto.key=TRUE)
+
+featurePlot(base,y=as.factor(km$cluster),plot="pairs",auto.key=TRUE) 
+```
+
+# Agrupamiento k-means - Parte V.
+
+### 8. El withinss de cada grupo es la suma de la distancia de cada elemento a su centroide Si hay 4 grupos por ej: habría 4 withinss.
+
+```{r}
+# a. Calcule los withinss de los grupos.
+km$withinss
+```
+```{r}
+# b. Sume los withinss.
+w = 15.15100 +39.82097 +23.87947
+w
+```
+```{r}
+# c. Obtenga la suma de los withinss.
+sum(km$withinss)
+```
+
+```{r}
+# d. Fíjese que tot withinss es la suma de los withinss.
+km$tot.withinss
+```
+# Agrupamiento k-means - Parte VI.
+
+### 9. Calcula: ``km$betweenss+km$tot.withinss``.
+
+```{r}
+km$betweenss+km$tot.withinss
+```
+### 10. Ver que la suma anterior es igual a ``km$totss``.
+
+```{r}
+km$totss
+
+```
+
+### 11. ¿Qué aparece en pantalla escribiendo ``km``?
+
+```{r}
+km
+```
+
+
+# Bibliografia:
+
+* [Pretty Docs](https://github.com/yixuan/prettydoc/)
+* [markdowntemplates](https://github.com/hrbrmstr/markdowntemplates)
+* [rmdformats](https://github.com/juba/rmdformats)
+
+# Muchas Gracias!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
