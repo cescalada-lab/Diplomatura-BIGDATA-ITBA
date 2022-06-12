@@ -1,0 +1,671 @@
+---
+title: "Diplomatura en BIG DATA"
+subtitle:  "Data Mining & Machine Learning"
+author: "Escalada Christian, 33.549.575"
+date: "01-06-2022"
+output:
+  prettydoc::html_pretty:
+    theme: hpstr 
+    highlight: vignette
+---
+
+<p align="center">
+   <img src="https://github.com/cescalada-lab/Diplomatura-BIGDATA-ITBA/blob/main/ITBA_LOGO.png?raw=true" />
+</p>
+
+<center> <h1>Trabajo Práctico N° 2</h1> </center>
+
+<center> <h2>Aprendizaje Supervisado</h2> </center>
+
+
+$$\\[1in]$$
+
+## Parte A – Preprocesamiento de los datos.
+
+$$\\[0in]$$
+
+#### 1.1. Ingrese a la página web de la Universidad de California.
+
+[Universidad de California](https://archive.ics.uci.edu/ml/datasets/seeds)
+
+#### 1.2. Descargue el archivo ``seeds_dataset.txt``.
+
+[seeds_dataset.txt](https://archive.ics.uci.edu/ml/machine-learning-databases/00236/seeds_dataset.txt)
+
+#### 1.3. Copie aquí el Abstract.
+
+>Abstract: 
+>
+>Measurements of geometrical properties of kernels belonging to three different 
+>varieties of wheat. A soft X-ray technique and GRAINS package were used to 
+>construct all seven, real-valued attributes.
+
+#### 2.1. Busque en la página web e indique aquí: ¿cuáles son las 3 variedades de trigo que se estudiarán?
+
+>Data Set Information:
+>
+>The examined group comprised kernels belonging to three different varieties of wheat: 
+**Kama**, **Rosa** and **Canadian**, 70 elements each, randomly selected for the experiment.
+
+* Las 3 variedades a estudiar son: **Kama**, **Rosa**, **Canadian**.
+
+#### 2.2. Optativo: busque una imagen de granos de trigo. Indique la página web origen de dicha imagen.
+
+![Fuente: depositphotos.com [^1]](https://st2.depositphotos.com/4278641/7727/i/600/depositphotos_77271764-stock-photo-ears-of-wheat-and-bowl.jpg)
+
+[^1]: [depositphotos.com](https://st2.depositphotos.com/4278641/7727/i/600/depositphotos_77271764-stock-photo-ears-of-wheat-and-bowl.jpg)
+
+#### 3.1. Abra el archivo seeds_dataset.txt en R como “base” de la siguiente manera:
+
+```{r}
+base=read.table("seeds_dataset.txt",header=F)
+```
+
+#### 3.2. Muestre un ``head(base)``.
+
+```{r}
+head(base)
+```
+
+#### 3.3. Renombre cada variable:
+
+```{r}
+names(base)[names(base)=="V1"]="Area"
+names(base)[names(base)=="V2"]="Perimetro"
+names(base)[names(base)=="V3"]="Compactitud"
+names(base)[names(base)=="V4"]="Largo"
+names(base)[names(base)=="V5"]="Ancho"
+names(base)[names(base)=="V6"]="Asimetria"
+names(base)[names(base)=="V7"]="Division"
+names(base)[names(base)=="V8"]="Variedad"
+```
+
+#### 3.4. Muestre un ``head(base)`` con el cambio de las variables.
+
+```{r}
+head(base)
+```
+
+#### 4.1. Transforme a categórica la variable Variedad y renombre las variedades 1, 2 y 3 como “kama”, “rosa” y “canadian”:
+
+```{r}
+base$Variedad=factor(base$Variedad,levels=c(1,2,3),
+                     labels=c("kama","rosa","canadian"))
+```
+
+
+#### 4.2. Muestre un head de la base con las variables transformadas.
+
+```{r}
+head(base)
+```
+
+$$\\[1in]$$
+
+## Parte B – Análisis Exploratorio de Datos.
+
+$$\\[0in]$$
+
+#### 1. ¿Cuántas semillas hay por variedad?
+
+```{r}
+summary(base$Variedad)
+```
+
+* Existen **70** Semillas por Variedad.
+
+#### 2. Realice un gráfico de barras de la variable a predecir Variedad. 
+
+```{r}
+pie(table(base$Variedad),main="Variedad  de Semillas por Tipo")
+```
+
+#### 3. Realice un gráfico de dispersión:
+* Entre 2 variables que no sean Variedad.
+* coloréelo por la variable Variedad.
+* agregue una leyenda que indique cuál es cada grupo.
+* Elija las variables en y & x, un título y un pch.
+
+```{r}
+# Importamos Librerias:
+library(caret)
+```
+
+```{r}
+xyplot(base$Largo~base$Ancho,groups=base$Variedad,base,auto.key=TRUE,
+       par.settings=simpleTheme(pch=c(3,4,5)),pch=c(3,4,5),
+       main="Largo vs Ancho de Semilla de Trigo por Tipo",
+       xlab="Ancho de Semilla", ylab="Largo de Semilla")
+````
+
+
+#### 4.1. Con la instrucción ``base[numFila,]`` se puede obtener los datos de uno de los granos de trigo. 
+
+* Considere los 2 últimos dígitos de su DNI: ``(75)``.
+* Muestre aquí el registro correspondiente.
+
+```{r}
+trigo=base[75,]
+trigo
+```
+
+
+4.2. ¿De qué variedad es?
+
+* Se trata de la Variedad **ROSA** el Tipo de Semilla que me tocó.
+
+## Parte C - Conjuntos.
+
+#### 1.1. Considere los **3** últimos dígitos de su DNI ``(3numDNI)`` para el seteo de semilla.
+
+* Mis 3 últimos números de mi DNI son: **575**.
+
+#### 1.2. Particione la base en un conjunto de **Entrenamiento** y uno de **Testeo**.
+
+* Además:
+  * Si su DNI termina en 0, 1, 2 ó 3:
+    * Setee **p=0.70**
+    
+  * Si su DNI termina en 4, 5, 6 ó 7:
+    * Setee **p=0.75**
+    
+  * Si su DNI termina en 8 ó 9:
+    * Setee **p=0.80**
+
+
+* Mi último número de DNI es **5**.
+* p va a ser igual a **0.75**.
+
+```{r}
+# El código va a quedar:
+set.seed(575);particion=createDataPartition(y=base$Variedad,p=0.75,list=FALSE)
+
+entreno= base[particion,]
+testeo=  base[-particion,]
+```
+
+#### 2. Muestre un head y un summary del conjunto de Entrenamiento y del conjunto de Testeo.
+
+```{r}
+# Head Entrenamiento:
+head(entreno)
+```
+
+```{r}
+# Head Testeo:
+head(testeo)
+```
+
+```{r}
+# Summary Entrenamiento:
+summary(entreno)
+```
+
+```{r}
+# Summary Testeo:
+summary(testeo)
+```
+
+#### 3.1. Realice:
+
+* ``summary(base$Variedad)``
+
+* ``summary(entreno$Variedad)``
+
+* ``summary(testeo$Variedad)``
+
+```{r}
+summary(base$Variedad)
+```
+
+```{r}
+summary(entreno$Variedad)
+```
+
+```{r}
+summary(testeo$Variedad)
+```
+
+#### 3.2. ¿Cuántos registros quedaron por variedad de trigo en el conjunto de entrenamiento y en el de testeo?
+
+* En el Conjunto de Entrenamiento quedaron **53** registros por variedad de trigo.
+* En el Conjunto de Testeo quedaron **17** registros por variedad de trigo.
+
+$$\\[1in]$$
+
+## Parte D – Árbol de Decisión
+
+$$\\[0in]$$
+
+#### 1.1. Cree un Árbol de Decisión (con librería rpart) para modelar el problema planteado.
+
+```{r}
+# Importamos Librerias:
+library(rpart)
+```
+
+
+```{r}
+arbol=rpart(Variedad~.,entreno,method="class")
+```
+
+#### 1.2. Escriba arbol<enter> y muestre una captura de pantalla de la información que aparece.
+
+```{r}
+arbol
+```
+
+#### 2. Grafique el Árbol de Decisión resultante.
+
+```{r}
+# Importamos Librerias:
+library(rpart.plot)
+
+#Graficamos el AdD
+rpart.plot(arbol,extra=1,type=5)
+```
+
+#### 3. ¿Cuántas “hojas” tiene el Árbol de Decisión?
+
+* El Árbol de Decisión tiene 4 hojas.
+
+#### 4.1. Según el Árbol de Decisión creado, ¿cuándo una semilla es de la variedad “rosa”?
+
+* Según mi AdD, la semilla es de variedad **Rosa** cuando la variable predictora **División** es Mayor o Igual a **5.6** unidades.
+
+#### 4.2. Indique las reglas siguiendo las ramas desde el nodo raíz hasta las hojas “rosa”.
+
+* Si **División** es **Mayor/Igual** a **5.6**, entonces el tipo de semilla es **Rosa**.
+* Si **División** es **Menor** a **5.6**, entonces preguntamos:
+  * Si **Área** es **Mayor/Igual** a **13**, entonces el tipo de semilla es **Kama**.
+  * Si **Área** es **Menor** a **13**, entonces preguntamos:
+    * Si **Asimetría** es **Mayor/Igual** a **3.2**, entonces el tipo de semilla es **Canadian**.
+    * Si **Asimetría** es **Menor** a **3.2**, entonces el tipo de semilla es **Kama**.
+
+#### 5.1.  Testee el Árbol de Decisión.
+
+```{r}
+pred=predict(arbol,testeo,type="class")
+```
+
+#### 5.2. Compare: ``head(pred,10)`` con ``head(test$Variedad,10)``.
+
+```{r}
+head(pred,10)
+```
+
+```{r}
+head(testeo$Variedad,10)
+```
+
+#### 5.3. Vea  si la predicción de los 10 primeros elementos coincide con lo esperado.
+
+* En líneas Generales podemos afirmar que la predicción del AdD coincide con lo esperado en Test, ya que predijo **Kama** a todos los elementos, excepto a uno que lo clasificó como **Canadian**.
+
+#### 6.1. Calcule la matriz de confusión y muestre los resultados obtenidos.
+
+```{r}
+confusionMatrix(pred,testeo$Variedad)
+```
+
+#### 7.1. Calcule el Accuracy según la cantidad de registros bien clasificados.
+
+* **Fórmula**:
+
+$$ Accuracy = \frac{\text{Diagonal Aciertos}}{Total} $$
+
+* Cantidad de Registros bien clasificados:
+
+  * **Kama**: 16.
+  * **Rosa**: 17.
+  * **Canadian**: 13.
+
+#### 7.2. Indique con números la fórmula que usó.
+
+$$ Accuracy = \frac{(17 + 16 + 13)}{(17 + 17 + 17)} $$
+
+#### 7.3. Verifique que coincida con el Accuracy obtenido por confusionMatrix.
+
+```{r, echo=FALSE}
+Acc= round((17 + 16 + 13) / (17 + 17 + 17 ),3)
+
+cat("El Accuracy obtenido en este punto es:",Acc,"; Cuyo valor coincide 
+con el Acc obtenido por la Matriz de Confusión del punto 6.1.")
+```
+
+#### 8. ¿Cuál categoría presenta menor sensibilidad?
+
+* La Categoría que presenta menor **Sensibilidad** es la categoría: **Canadian**, que presenta una Sensibilidad de **0.7647**, frente a la Sensibilidad de 1.0 y 0.94 que presentan **kama** y **Rosa** respectivamente.
+
+#### 9.1. Considere el grano de trigo correspondiente a los últimos 2 dígitos de su DNI.
+
+* Mis 2 últimos números de mi DNI son: **75**.
+
+#### 9.2. Según el Árbol de Decisión, ¿qué variedad es?
+
+```{r}
+predict(arbol,trigo,type="class")
+```
+
+* Según el AdD, la Semilla del Índice  **75**, correspondería a la variedad: **Rosa**.
+
+#### 9.3. ¿Coincide la predicción con lo esperado?
+
+```{r}
+trigo
+```
+
+* La Variedad esperada es **Rosa**, por lo tanto podemos afirmar que si **coinciden** ambos resultados.
+
+#### 10. Indique la predicción de “Trigo” con probabilidades.
+
+```{r}
+predict(arbol,trigo)
+```
+* El AdD Predice que nuestro Trigo (``base[75,]``) va a ser **Rosa** con un **98%** de confianza.
+
+#### 11. Indique la regla del Árbol de Decisión para “Trigo”.
+
+```{r}
+rpart.predict(arbol, trigo, rules=TRUE)
+```
+
+* Cuando seteamos ``rules=TRUE``, aparece en pantalla ``Division >= 5.6`` para clasificar nuestra semilla a la variedad **Rosa**.
+
+$$\\[1in]$$
+
+## Parte E – Red Neuronal.
+
+$$\\[0in]$$
+
+#### 1.1. Considere los 3 últimos dígitos de su DNI (3numDNI) para el seteo de semilla.
+
+* Mis 3 últimos números de mi DNI son: **575**.
+
+#### 1.2. Cree una Red Neuronal para modelar el problema planteado.
+
+* Con:
+  * maxit=10000
+  * size=10.
+
+```{r}
+# Importamos Librerías:
+library(nnet)
+library(NeuralNetTools)
+```
+
+#### 1.3. Indique el código R utilizado.
+
+```
+set.seed(575);red=nnet(Variedad~.,entreno,size=10,maxit=10000)
+```
+
+#### 2. Muestre una captura de pantalla de la lista de iteraciones de la Red Neuronal.
+
+```{r}
+set.seed(575);red=nnet(Variedad~.,entreno,size=10,maxit=10000)
+```
+
+#### 3. Escriba red<enter> y muestre una captura de pantalla de la información que aparece.
+
+```{r}
+red
+```
+#### 4. Indique la cantidad de **pesos** y la cantidad de **iteraciones** resultantes.
+
+* Cantidad de pesos: **113** weights.
+* Cantidad de iteraciones: más de **50** iteraciones realizó la Red Neuronal.
+
+#### 5.1. Dibuje la Red Neuronal.
+
+```{r}
+plotnet(red)
+```
+
+
+
+#### 5.2. Cambiar los colores del gráfico de la Red Neuronal.
+
+$$ \text{Gráfico de la Red Neuronal} $$
+
+```{r, echo=FALSE}
+plotnet(red,
+        circle_col = "darksalmon",  
+        pos_col = "pink",
+        neg_col = "grey",
+        bord_col = "darkred",
+        circle_cex=5,
+        alpha_val=1,
+        cex_val=0.70,
+        max_sp= TRUE) 
+```
+
+#### 6.1. Testee la Red Neuronal.
+
+```{r}
+pred2=predict(red,testeo,type="class")
+```
+
+#### 6.2. Compare ``head(pred2,10)`` con ``head(testeo$Variedad,10)``.
+
+```{r}
+# Observamos la predicción:
+head(pred2,10)
+```
+
+```{r}
+# Observamos Test:
+head(testeo$Variedad,10)
+```
+
+#### 6.3. Vea si la predicción de los 10 primeros elementos coincide con lo esperado.
+
+* La predicción de los primeros 10 elementos en General coincide, salvo 2 elementos que la Red predijo como **Canadian** cuando lo esperado era que prediga **Kama**.
+
+#### 7. Calcule la matriz de confusión y muestre los resultados obtenidos. 
+
+```{r}
+confusionMatrix(factor(pred2),testeo$Variedad)
+```
+
+#### 8. ¿Cuál fue el Accuracy?
+
+* El Accuracy fue de **0.902**.
+
+#### 9.1. Considere el grano de trigo correspondiente a los últimos 2 dígitos de su DNI.
+
+* Mis 2 últimos números de mi DNI son: 75.
+
+#### 9.2. Según la Red Neuronal, ¿qué variedad es? 
+
+```{r}
+predict(red,trigo,type="class")
+```
+
+* Según la Red Neuronal, la Semilla del Índice **75**, correspondería a la variedad: **Rosa**.
+
+#### 9.3. ¿Coincide la predicción con la variedad esperada? 
+
+```{r}
+trigo
+```
+
+* La Variedad esperada es **Rosa**, por lo tanto podemos afirmar que si **coinciden** ambos resultados.
+
+$$\\[1in]$$
+
+## Parte F – Comparación de modelos.
+
+$$\\[0in]$$
+
+#### 1. Cree una tabla con el **Accuracy** de cada modelo, y la **Sensibilidad** y **Especificidad** de cada modelo por categoría. 
+
+|Variedad|AdD Accuracy|RN Accuracy|AdD Sensibilidad|RN Sensibilidad |AdD Especificidad|RN Especificidad |
+|:-------|:----------:|:---------:|:--------------:|:--------------:|:---------------:|:---------------:|
+|**Kama**|0.902       |0.902      |0.9412          |0.8235          |0.8824           |0.9412           |
+|**Rosa**|0.902       |0.902      |1.0000          |1.0000          |1.0000           |1.0000           |
+|**Canadian**|0.902   |0.902      |0.7647          |0.8824          |0.9706           |0.9118           |
+
+#### 2.1. Compare los resultados obtenidos con el Árbol de Decisión y la Red Neuronal. 
+
+#### 2.2. ¿Cuál modelo le parece que resultó mejor?
+
+* Con Respecto al mejor modelo, creo que no hay un claro Ganador.
+
+#### 2.3. ¿Según qué criterio?
+
+* El **criterio** en el cual fundamento mi postura es que:
+
+  * Para ambos modelos, el **Accuracy** es el mismo valor: 
+  
+  $$\Sigma Accuracy_{AdD} = \Sigma Accuracy_{RN} = 0.902$$
+  
+  * Con Respecto a la **Sensibilidad**, que es la **tasa de verdaderos positivos**:[^2]
+    * En General son altas en ambos modelos, eso es bueno ya que: Cuanto mayor es la Sensibilidad, la tasa de **FN** será menor[^3], por lo que la cantidad de Semillas que pertenecen a una variedad y fueron clasificadas como otra variedad, se reduce.
+    * Para la variedad **Rosa**, ambos modelos presentan el mismo valor.
+    * Para la variedad **Kama**, la Sensibilidad del AdD resultó mayor que de la RN.
+    * Para la variedad **Canadian**, la Sensibilidad de la RN resultó ser mayor.
+    * Pero en el **Global** la Sumatoria de la Sensibilidad en ambos modelos, da el mismo resultado:
+    
+    $$\Sigma Sensibilidad_{AdD} = \Sigma Sensibilidad_{RN} = 2.7059$$
+    
+  * Con Respecto a la **Especificidad**, que es la **tasa de verdaderos negativos**:[^4]
+  * En General son altas en ambos modelos, eso es bueno ya que: Cuanto mayor es la Especificidad, la tasa de **FP** será menor[^5], por lo que la cantidad de Semillas que fueron clasificadas como una determinada variedad, pero en realidad son de otra variedad, se reduce.
+    * Para la variedad **Rosa**, ambos modelos presentan el mismo valor.
+    * Para la variedad **Kama**, la Especificidad del RN resultó mayor que de la AdD.
+    * Para la variedad **Canadian**, la Especificidad de la AdD resultó ser mayor.
+    * Pero en el **Global** la Sumatoria de la Especificidad en ambos modelos, da el mismo resultado:
+    
+    $$\Sigma Especificidad_{AdD} = \Sigma Especificidad_{RN} = 2.853$$
+
+* En base a este breve argumento baso mi criterio de considerar que no hubo un claro Ganador respecto a estos dos modelos de Machine Learning analizados con este Dataset de Semillas de Trigo. Habría que utilizar otros Datasets para volver a comparar sus performances con nuevos datos.
+    
+[^2]: [Sensibilidad](https://www.cigna.com/es-us/individuals-families/health-wellness/hw/sensibilidad-y-especificidad-sts14487)
+[^3]: [Explicación Sensibilidad](https://www.sac.org.ar/cuestion-de-metodo/que-son-sensibilidad-y-especificidad/)
+[^4]: [Especificidad](https://www.cigna.com/es-us/individuals-families/health-wellness/hw/sensibilidad-y-especificidad-sts14487)
+[^5]: [Explicación Especificidad](https://www.sac.org.ar/cuestion-de-metodo/que-son-sensibilidad-y-especificidad/)
+
+$$\\[1in]$$
+
+## Anexo.
+$$\\[0in]$$
+
+#### Código:
+
+````
+Parte A – Preprocesamiento de los datos.
+base=read.table("seeds_dataset.txt",header=F)
+head(base)
+names(base)[names(base)=="V1"]="Area"
+names(base)[names(base)=="V2"]="Perimetro"
+names(base)[names(base)=="V3"]="Compactitud"
+names(base)[names(base)=="V4"]="Largo"
+names(base)[names(base)=="V5"]="Ancho"
+names(base)[names(base)=="V6"]="Asimetria"
+names(base)[names(base)=="V7"]="Division"
+names(base)[names(base)=="V8"]="Variedad"
+head(base)
+base$Variedad=factor(base$Variedad,levels=c(1,2,3),
+                     labels=c("kama","rosa","canadian"))
+head(base)
+
+Parte B – Análisis Exploratorio de Datos.
+summary(base$Variedad)
+pie(table(base$Variedad),main="Variedad  de Semillas por Tipo")
+library(caret)
+xyplot(base$Largo~base$Ancho,groups=base$Variedad,base,auto.key=TRUE,
+       par.settings=simpleTheme(pch=c(3,4,5)),pch=c(3,4,5),
+       main="Largo vs Ancho de Semilla de Trigo por Tipo",
+       xlab="Ancho de Semilla", ylab="Largo de Semilla")
+trigo=base[75,]
+trigo
+set.seed(575);particion=createDataPartition(y=base$Variedad,p=0.75,list=FALSE)
+entreno= base[particion,]
+testeo=  base[-particion,]
+head(entreno)
+head(testeo)
+summary(entreno)
+summary(testeo)
+summary(base$Variedad)
+summary(entreno$Variedad)
+summary(testeo$Variedad)
+
+Parte D – Árbol de Decisión
+library(rpart)
+arbol=rpart(Variedad~.,entreno,method="class")
+arbol
+library(rpart.plot)
+rpart.plot(arbol,extra=1,type=5)
+pred=predict(arbol,testeo,type="class")
+head(pred,10)
+head(testeo$Variedad,10)
+confusionMatrix(pred,testeo$Variedad)
+predict(arbol,trigo,type="class")
+predict(arbol,trigo)
+rpart.predict(arbol, trigo, rules=TRUE)
+library(nnet)
+library(NeuralNetTools)
+set.seed(575);red=nnet(Variedad~.,entreno,size=10,maxit=10000)
+red
+plotnet(red)
+plotnet(red,
+        circle_col = "darksalmon",  
+        pos_col = "pink",
+        neg_col = "grey",
+        bord_col = "darkred",
+        circle_cex=5,
+        alpha_val=1,
+        cex_val=0.70,
+        max_sp= TRUE) 
+pred2=predict(red,testeo,type="class")
+head(pred2,10)
+head(testeo$Variedad,10)
+confusionMatrix(factor(pred2),testeo$Variedad)
+predict(red,trigo,type="class")
+trigo
+````
+$$\\[0in]$$
+
+#### Librerias:
+
+````
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(nnet)
+library(NeuralNetTools)
+```` 
+$$\\[0in]$$
+
+#### Bibliografia:
+
+* [Centrar Títulos](https://es.stackoverflow.com/questions/452933/es-posible-centrar-t%C3%ADtulos-en-markdown-para-generar-pdf)
+* [Centrar Textos](https://foroayuda.es/r-como-centrar-la-salida-en-r-markdown/#google_vignette)
+* [How-to-add-whitespace](https://stackoverflow.com/questions/24425786/how-to-add-whitespace-to-an-rmarkdown-document)
+* [Wheet Grains](https://www.nestle-cereals.com/ac/sites/g/files/fawtmp321/files/styles/stage_visual_large_webp/public/d7/article_switching_to_wholegrain_2048x1152_01_2.jpg.webp?itok=XnPBZfBy)
+* [Árboles de Decisión I](https://es.wikipedia.org/wiki/Aprendizaje_basado_en_árboles_de_decisión#Limitaciones)
+* [Árboles de Decisión II](https://bookdown.org/content/2031/arboles-de-decision-parte-i.html)
+* [Algoritmo CART](https://www.codificandobits.com/blog/clasificacion-arboles-decision-algoritmo-cart/)
+* [Fórmula Latex](https://wiki.geogebra.org/es/Código_LaTeX_para_las_fórmulas_más_comunes)
+* [Plotnet](https://www.rdocumentation.org/packages/NeuralNetTools/versions/1.5.3/topics/plotnet)
+* [Plotnet](https://search.r-project.org/CRAN/refmans/NeuralNetTools/html/plotnet.html)
+* [R Colors](http://applied-r.com/wp-content/uploads/2019/01/rcolors_byname.png)
+* [Plots](https://rpubs.com/Rortizdu/140112)
+* [Markdown Tables](https://www.markdownguide.org/basic-syntax/#emphasis)
+* [Sensibilidad-Especificidad](https://www.cigna.com/es-us/individuals-families/health-wellness/hw/sensibilidad-y-especificidad-sts14487)
+* [Sensibilidad-Especificidad](https://www.sac.org.ar/cuestion-de-metodo/que-son-sensibilidad-y-especificidad/)
+
+$$\\[1in]$$
+
+# ¡Muchas Gracias!
+
+$$\\[0in]$$
+
+![](http://2.bp.blogspot.com/-mDbZyOsPqBY/U64kQJO_HpI/AAAAAAAAKCw/E6ho-qINRf8/s1600/wheat-heart.png)
+
+
+
+
+
+
+
