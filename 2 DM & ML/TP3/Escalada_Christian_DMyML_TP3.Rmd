@@ -1,0 +1,231 @@
+---
+title: "Diplomatura en BIG DATA"
+subtitle: "Machine Learning & Data Mining"
+author: "Escalada Christian, DNI: 33.549.575"
+date: "10-06-2022"
+
+output:
+  rmdformats::downcute:
+
+    self_contained: true
+    default_style: "light"
+    downcute_theme: "default"
+    thumbnails: false
+    lightbox: true
+    gallery: true
+    highlight: "kate"
+---
+
+
+<p align="center">
+   <img src="https://github.com/cescalada-lab/Diplomatura-BIGDATA-ITBA/blob/main/ITBA_LOGO.png?raw=true" />
+</p>
+
+<center> <h1>Trabajo Práctico N° 3</h1> </center>
+
+<center> <h2>Aprendizaje No Supervisado</h2> </center>
+
+
+$$\\[1in]$$
+
+# 1.1. Abra la base cheddar de la librería faraway.
+
+```{r}
+# Importamos Libreria
+library(faraway)
+
+# Cargamos Dataset
+data(cheddar)
+
+# Abrimos la base
+head(cheddar)
+```
+
+## 1.2. Indique de qué tratan cada una de las variables.
+
+* Las variables se tratan acerca de:
+
+  * ``Taste``: Es una puntuación de gusto subjetivo.
+  * ``Acetic``: Es la concentración de ácido acético medido en escala logarítmica.
+  * ``H2s``: Es la concentración de sulfuro de hidrógeno medido en escala logarítmica.
+  * ``Lactic``: Es la concentración de ácido láctico.
+
+# 2.1. Muestre un summary de la base.
+
+```{r}
+# Instanciamos Dataset
+base = cheddar
+
+# Hacemos Summary
+summary(base)
+```
+
+## 2.2. Considere los 3 últimos dígitos de su DNI para el seteo de la semilla.
+
+  * ``Además``: 
+  
+    * Si su DNI termina en 0, 1, 2 ó 3
+      * Cantidad de **Grupos** = ``3``
+    * Si su DNI termina en 4, 5, 6 ó 7
+      * Cantidad de **Grupos** = ``4``
+    * Si su DNI termina en 8 ó 9
+      * Cantidad de **Grupos** = ``5``
+
+
+* Mis 3 últimos números de mi DNI son: **575**.
+* Mi último número de DNI es **5**.
+* La ``Cantidad de Grupos`` asignado será: **4**.
+
+## 2.3. Realice un agrupamiento kmeans. Indique el código R utilizado.
+
+```{r}
+# Código R Utilizado:
+set.seed(575); km=kmeans(cheddar,4)
+```
+
+# 3.1 Seleccione 2 variables y realice un gráfico coloreado por los grupos formados.
+
+```{r, include=FALSE}
+# Importamos Libreria
+library(caret)
+
+```
+
+```{r, echo=FALSE}
+# Graficamos
+xyplot(base$Acetic~base$taste,base,groups=km$cluster,auto.key=TRUE,
+       par.settings=simpleTheme(pch=c(3,4,5,8)),pch=c(3,4,5,8),
+       main="Gráfico de Grupos",
+       xlab="Taste", ylab="Acetic")
+
+```
+
+* Las Variables que elegí para realizar el gráfico fueron: 
+  * ``Taste``.
+  * ``Acetic``.
+
+# 4.1 ¿Cuántos elementos quedaron en cada grupo?
+
+```{r}
+# Verificamos los elementos.
+km
+```
+
+* Podemos observar que los grupos quedaron conformados por las siguientes cantidades:
+
+  * Grupo N°1: ``13`` unidades.
+  * Grupo N°2: ``6``  unidades.  
+  * Grupo N°3: ``7``  unidades.
+  * Grupo N°4: ``4``  unidades.
+  
+  
+# 5.1 Muestre km$cluster.
+
+```{r}
+km$cluster
+```
+
+## 5.2 ¿A qué grupo pertenece el tercer elemento de la base?
+
+* el **Tercer** elemento de la Base pertenece al ``Grupo N°2``.
+
+# 6.1 Muestre una captura de pantalla de los Centroides.
+
+```{r}
+# Cargamos Centroides
+km$centers
+```
+
+```{r}
+# Mostramos Centroides
+attach(base)
+plot(taste,Acetic,pch=19,col=km$cluster,main = "Gráfico de Grupos con Centroides")
+points(km$centers[,c("taste","Acetic")],pch="☺",col=1:4,cex=4)
+
+
+```
+
+
+
+# 7.1 Determine alguna característica de alguno de los grupos con respecto a los otros grupos.
+
+* ``tip``: Analice la información de los Centroides.
+
+```{r}
+# Cargamos Centroides
+km$centers
+```
+
+* Podemos observar que en general los valores que pertenecen a ``taste`` son los más grandes en cada grupo, por contraparte los valores que pertenecen a ``Lactic`` son los más bajos en cada grupo, mientras que los valores de ``H2S`` y ``Acetic`` son valores muy similares.
+  En general podemos afirmar que el **Grupo 4** presenta valores más grandes, mientras que el **Grupo 3** presentan los valores más chicos.
+
+# Anexo:
+
+## Librerias:
+
+````
+library(faraway)
+library(caret)
+````
+## Código:
+
+````
+# Importamos Libreria
+library(faraway)
+
+# Cargamos Dataset
+data(cheddar)
+
+# Abrimos la base
+head(cheddar)
+
+# Instanciamos Dataset
+base = cheddar
+
+# Hacemos Summary
+summary(base)
+
+# Código R Utilizado:
+set.seed(575); km=kmeans(cheddar,4)
+
+# Importamos Libreria
+library(caret)
+
+# Graficamos
+xyplot(base$Acetic~base$taste,base,groups=km$cluster,auto.key=TRUE,
+       par.settings=simpleTheme(pch=c(3,4,5,8)),pch=c(3,4,5,8),
+       main="Gráfico de Grupos",
+       xlab="Taste", ylab="Acetic")
+       
+# Verificamos los elementos.
+km
+
+# Mostramos cluster
+km$cluster
+
+# Mostramos Centroides
+attach(base)
+plot(taste,Acetic,pch=19,col=km$cluster,main = "Gráfico de Grupos con Centroides")
+points(km$centers[,c("taste","Acetic")],pch="☺",col=1:4,cex=4)
+
+# Cargamos los Centroides
+km$centers
+
+````
+
+## Bibliografía:
+
+* [plot Function](https://r-coder.com/plot-en-r/#Titulo_del_plot_en_R)
+* [Clustering](https://www.etsisi.upm.es/sites/default/files/doctorado/curso_2019_20/material5_jesuslacalle_seminv_2019-20.pdf)
+* [R Plot()](https://bookdown.org/jboscomendoza/r-principiantes4/exportar-graficos.html)
+* [Pch symbols](http://www.sthda.com/english/wiki/r-plot-pch-symbols-the-different-point-shapes-available-in-r)
+* [xyplot()](https://stat.ethz.ch/pipermail/r-help/2009-February/381379.html)
+* [Cluster I](https://rpubs.com/lhromeroj/analisisdeclusterR)
+* [Cluster II](https://rpubs.com/rdelgado/399475)
+* [K-means Wikipedia](https://en.wikipedia.org/wiki/K-means_clustering)
+* [Chesse emoji](https://emojipedia.org/cheese-wedge/)
+
+## ¡Muchas Gracias!
+
+
+![](https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/310/cheese-wedge_1f9c0.png)
