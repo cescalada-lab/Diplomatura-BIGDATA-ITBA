@@ -26,7 +26,7 @@
   * Usamos Framework PrettyDocs & rmdformats
 
 
-* librerias:
+* Librerias:
 
   + library(rpart)
   + library(rpart.plot)
