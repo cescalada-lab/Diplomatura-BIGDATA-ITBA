@@ -24,3 +24,22 @@
   * Armamos y Configuramos Ambientes de Trabajo
   * Usamos Rmarkdown
   * Usamos Framework PrettyDocs & rmdformats
+
+
+* librerias:
+
+  + library(rpart)
+  + library(rpart.plot)
+  + library(caret)
+  + library(rgl)
+  + library(MASS)
+  + library(e1071)
+  + library(randomForest)
+  + library(tm)
+  + library(wordcloud)
+  + library(faraway)
+  + library(ggplot2)
+  + library(nnet)
+  + library(NeuralNetTools)
+  + library(mlbench)
+  + library(jpeg)
