@@ -1,6 +1,6 @@
 # Clase 1 - Primeros Pasos:
 
-## Temas de la primera clase:
+## Temas:
 
 	* Google Colab (o Anaconda + Jupyter Notebook).
 	* Ejecutar comandos en Python.
